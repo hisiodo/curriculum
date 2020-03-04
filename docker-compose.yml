@@ -1,6 +1,20 @@
 # docker-compose.yml
-version: '3'
+version: '3.7'
 services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 'docker'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_DB: 'curriculum'
+      POSTGRES_PASSWORD: 'docker'
+      DATABASE_URL: postgres://postgres:docker@localhost:54320/curriculum
+    volumes: 
+      - './pgdata:/var/lib/postgresql/data'
+    ports: 
+      - '54320:5432'
+    networks:
+      - backend
   app:
     build: .
     depends_on:
@@ -8,8 +22,10 @@ services:
     ports:
       - '3000:3000'
       - '9229:9229'
+    networks:
+      - backend
+    env_file:
+      - .env
 
-  postgres:
-    image: postgres:11.2-alpine
-    environment:
-      POSTGRES_PASSWORD: docker
+networks:
+  backend:

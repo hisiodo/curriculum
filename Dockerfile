@@ -1,12 +1,14 @@
-FROM node:alphine
+FROM node:alpine
 
 WORKDIR /usr/app
 
 COPY package*.json ./
 RUN npm install 
 
+COPY .env ./.env
+
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "start:dev"]
+CMD ["npm", "start"]

@@ -5,6 +5,9 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Get,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { Author } from './author.model';
@@ -17,5 +20,10 @@ export class AuthorController {
   @UsePipes(ValidationPipe)
   createAuthor(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
     return this.authorService.createAuthor(createAuthorDto);
+  }
+
+  @Get('/:id')
+  getAuthorByid(@Param('id', ParseIntPipe) id: number): Promise<Author> {
+    return this.authorService.getAuthorById(id);
   }
 }

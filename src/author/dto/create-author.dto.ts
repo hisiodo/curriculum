@@ -1,15 +1,14 @@
-// import { IsNotEmpty, IsDate } from 'class-validator';
+import { IsNotEmpty, IsDate } from 'class-validator';
 
 export class CreateAuthorDto {
   id?: number;
 
-  // @IsNotEmpty()
+  @IsNotEmpty()
   public name: string;
 
-  // @IsNotEmpty()
+  @IsNotEmpty()
   public lastName: string;
 
-  // @IsNotEmpty()
-  // @IsDate()
+  @IsNotEmpty()
   public birthDate: Date;
 }
