@@ -75,7 +75,9 @@ describe('Author Controller (e2e)', () => {
   afterEach(async () => {
     await Promise.all(
       EntitiesData.map(model => {
-        return dbTestProvider.getRepository(model).destroy({ truncate: true });
+        return dbTestProvider
+          .getRepository(model)
+          .destroy({ truncate: true, force: true });
       }),
     );
   });
