@@ -71,6 +71,23 @@ describe('Author Controller (e2e)', () => {
     expect(client.status).toBe(200);
     expect(client.body.name).toEqual(authorFake.name);
   });
+  it('Shuold  failure when not found author by  /:id (GET)', async () => {
+    const client = await request(app.getHttpServer()).get(`/authors/000000`);
+
+    expect(client.status).toBe(404);
+    expect(client.body.error).toBe('Not Found');
+  });
+
+  it('Shuold show a list of authors (GET)', async () => {
+    const authorsFake = await FakeFactory.getFactory(Fakes.AUTHOR).createMany(
+      3,
+    );
+
+    const client = await request(app.getHttpServer()).get(`/authors`);
+
+    expect(client.status).toBe(200);
+    expect(client.body.length).toEqual(authorsFake.length);
+  });
 
   afterEach(async () => {
     await Promise.all(

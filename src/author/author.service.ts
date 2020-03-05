@@ -23,4 +23,9 @@ export class AuthorService {
 
     return authorExist;
   }
+
+  async getAuthors(): Promise<Author[]> {
+    const authors = await this.authorRepository.findAll();
+    return authors;
+  }
 }

@@ -26,4 +26,8 @@ export class AuthorController {
   getAuthorByid(@Param('id', ParseIntPipe) id: number): Promise<Author> {
     return this.authorService.getAuthorById(id);
   }
+  @Get()
+  getAuthors(): Promise<Author[]> {
+    return this.authorService.getAuthors();
+  }
 }
