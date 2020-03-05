@@ -14,7 +14,8 @@ import { DatabaseModule } from '../../src/database/database.module';
 
 import { dbTestProvider } from '../db-test-provider';
 import { EntitiesData } from '../../src/database/entities.data';
-
+import { CreateAuthorDto } from 'src/author/dto/create-author.dto';
+import * as dbModuleConfig from './db-config-module';
 describe('Author Controller (e2e)', () => {
   let app: INestApplication;
   beforeEach(async () => {
@@ -22,17 +23,7 @@ describe('Author Controller (e2e)', () => {
       imports: [
         AuthorModule,
         DatabaseModule,
-        SequelizeModule.forRoot({
-          dialect: 'postgres',
-          host: 'localhost',
-          port: 5432,
-          username: 'postgres',
-          password: 'docker',
-          database: 'curriculum',
-          autoLoadModels: true,
-          synchronize: true,
-          models: [Author],
-        }),
+        SequelizeModule.forRoot({ ...dbModuleConfig }),
       ],
       providers: [
         {
@@ -48,7 +39,7 @@ describe('Author Controller (e2e)', () => {
     await app.init();
   });
 
-  it('Shuold create a author / (Post)', async () => {
+  it('Shuold create a author / (POST)', async () => {
     const authorFake: Author = await FakeFactory.getFactory(
       Fakes.AUTHOR,
     ).generate();
@@ -87,6 +78,102 @@ describe('Author Controller (e2e)', () => {
 
     expect(client.status).toBe(200);
     expect(client.body.length).toEqual(authorsFake.length);
+  });
+
+  it('Shuold update a auhor by /:id (PUT)', async () => {
+    const authorFake: CreateAuthorDto = await FakeFactory.getFactory(
+      Fakes.AUTHOR,
+    ).create();
+
+    const dataToUpdate = { name: 'Name Updated' };
+
+    const client = await request(app.getHttpServer())
+      .put(`/authors/${authorFake.id}`)
+      .send(dataToUpdate);
+
+    expect(client.status).toBe(200);
+    expect(client.body.name).toBe(dataToUpdate.name);
+  });
+
+  it('Shuold failure when update a auhor does not exist /:id (PUT)', async () => {
+    const dataToUpdate = { name: 'Name Updated' };
+
+    const client = await request(app.getHttpServer())
+      .put(`/authors/00000000`)
+      .send(dataToUpdate);
+
+    expect(client.status).toBe(404);
+    expect(client.body.error).toBe('Not Found');
+  });
+
+  it('Shuold delete a auhor by /:id (DELETE)', async () => {
+    const authorFake: CreateAuthorDto = await FakeFactory.getFactory(
+      Fakes.AUTHOR,
+    ).create();
+
+    const client = await request(app.getHttpServer()).delete(
+      `/authors/${authorFake.id}`,
+    );
+
+    expect(client.status).toBe(200);
+    expect(client.body).toEqual({});
+  });
+
+  it('Shuold failure when delete a auhor does not exist /:id (DELETE)', async () => {
+    const client = await request(app.getHttpServer()).delete(
+      `/authors/00000000`,
+    );
+
+    expect(client.status).toBe(404);
+    expect(client.body.error).toBe('Not Found');
+  });
+
+  it('Shuold failure when create a author without name / (POST)', async () => {
+    const {
+      birthDate,
+      lastName,
+    }: CreateAuthorDto = await FakeFactory.getFactory(Fakes.AUTHOR).generate();
+    const client = await request(app.getHttpServer())
+      .post('/authors')
+      .send({ birthDate, lastName });
+
+    expect(client.status).toBe(400);
+
+    expect(client.body.message[0].property).toBe('name');
+    expect(client.body.message[0].constraints.isNotEmpty).toBe(
+      'name should not be empty',
+    );
+  });
+
+  it('Shuold failure when create a author without lastName / (POST)', async () => {
+    const { birthDate, name }: CreateAuthorDto = await FakeFactory.getFactory(
+      Fakes.AUTHOR,
+    ).generate();
+    const client = await request(app.getHttpServer())
+      .post('/authors')
+      .send({ birthDate, name });
+
+    expect(client.status).toBe(400);
+
+    expect(client.body.message[0].property).toBe('lastName');
+    expect(client.body.message[0].constraints.isNotEmpty).toBe(
+      'lastName should not be empty',
+    );
+  });
+  it('Shuold failure when create a author without birthDate / (POST)', async () => {
+    const { name, lastName }: CreateAuthorDto = await FakeFactory.getFactory(
+      Fakes.AUTHOR,
+    ).generate();
+    const client = await request(app.getHttpServer())
+      .post('/authors')
+      .send({ lastName, name });
+
+    expect(client.status).toBe(400);
+
+    expect(client.body.message[0].property).toBe('birthDate');
+    expect(client.body.message[0].constraints.isNotEmpty).toBe(
+      'birthDate should not be empty',
+    );
   });
 
   afterEach(async () => {
