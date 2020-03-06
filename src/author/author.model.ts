@@ -1,6 +1,6 @@
 import { Table, Model, Column, DataType } from 'sequelize-typescript';
 
-@Table
+@Table({ tableName: 'authors' })
 export class Author extends Model<Author> {
   @Column({ primaryKey: true, autoIncrement: true, allowNull: false })
   id: number;

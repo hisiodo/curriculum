@@ -1,7 +1,7 @@
 # compiled output
 /dist
 /node_modules
-
+/test
 #configuration
 .env
 # Logs
@@ -11,7 +11,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-
+pgdata
 # OS
 .DS_Store
 

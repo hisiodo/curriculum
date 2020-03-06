@@ -1,14 +1,9 @@
 import { IsNotEmpty, IsDate } from 'class-validator';
 
-export class CreateAuthorDto {
-  id?: number;
-
-  @IsNotEmpty()
+export class UpadateAuthorDto {
   public name: string;
 
-  @IsNotEmpty()
   public lastName: string;
 
-  @IsNotEmpty()
   public birthDate: Date;
 }
