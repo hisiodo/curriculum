@@ -6,7 +6,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthorModule } from '../../src/author/author.module';
 import { AuthorService } from '../../src/author/author.service';
 
-import { Author } from '../../src/author';
 import { FakeFactory } from '../../test/factory/fake-factory';
 import { Fakes } from '../../test/factory/enum-fakes';
 
@@ -40,7 +39,7 @@ describe('Author Controller (e2e)', () => {
   });
 
   it('Shuold create a author / (POST)', async () => {
-    const authorFake: Author = await FakeFactory.getFactory(
+    const authorFake: CreateAuthorDto = await FakeFactory.getFactory(
       Fakes.AUTHOR,
     ).generate();
     const client = await request(app.getHttpServer())
